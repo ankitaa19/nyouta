@@ -7,20 +7,8 @@ import GuestListBooklet from "./components/GuestListBooklet"
 import './style/PlannerBooks.scss'
 import FreePrintable from "./components/FreePrintable";
 import AboutPlanner from "./components/AboutPlanner";
-import GetAllPhotoBooksProducts from "../../hooks/GetAllPhotoBooksProducts";
-import { useSelector } from "react-redux";
-import GetAllFreeGreetingsroducts from "../../hooks/GetAllFreeGreetingsroducts";
-import getAllWeddingManagementBook from "../../hooks/getAllWeddingManagementBook";
-import { useEffect } from "react";
 
 export default function PlannerBook() {
-  GetAllPhotoBooksProducts();
-  GetAllFreeGreetingsroducts();
-  getAllWeddingManagementBook();
-
-  useEffect(()=>{
-    window.scrollTo(0,0)
-  },[])
 
   return (
     // <div className="min-h-screen bg-gray-50 planner_book">

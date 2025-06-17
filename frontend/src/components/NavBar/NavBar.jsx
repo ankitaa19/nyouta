@@ -2,18 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './style/Navbar.scss';
 import LOGO from '../../utils/nyotalogo';
-import UserProfilePopup from '../UserProfilePopup/UserProfilePopup';
 
 const NavBar = () => {
   const navigate = useNavigate();
   const [openDropdown, setOpenDropdown] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [touchDevice, setTouchDevice] = useState(false);
-  const [user, setUser] = useState(null);
-  const [profileOpen, setProfileOpen] = useState(false);
 
   const dropdownItems = {
     invitation: [
+      { name: 'Planner Book', path: '/books' },
       { name: 'Wedding Invites', path: '#' },
       { name: 'Party Invites', path: '#' },
       { name: 'Pooja Invites', path: '#' },
@@ -21,7 +19,6 @@ const NavBar = () => {
       { name: 'Short Invites - Free', path: '#' }
     ],
     books: [
-      { name: 'Planner Book', path: '/books' },
       { name: 'Soft Cover Photobook', path: '#' },
       { name: 'Hard Cover Photobook', path: '#' },
       { name: 'Spiral Photobook', path: '#' },
@@ -53,12 +50,6 @@ const NavBar = () => {
         (navigator.msMaxTouchPoints > 0));
     };
     setTouchDevice(isTouchDevice());
-
-    // Load user from localStorage
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
   }, []);
 
   const handleMenuToggle = (menu) => {
@@ -75,18 +66,6 @@ const NavBar = () => {
     if (!touchDevice) {
       setOpenDropdown(null);
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
-    setProfileOpen(false);
-    navigate('/');
-  };
-
-  const toggleProfile = () => {
-    setProfileOpen(!profileOpen);
   };
 
   const renderDropdown = (menuKey) => (
@@ -151,25 +130,8 @@ const NavBar = () => {
       </div>
 
       <div className={`navbar-auth ${menuOpen ? 'active' : ''}`}>
-        {user ? (
-          <div className="user-profile">
-            <button className="welcome-btn" onClick={toggleProfile}>
-              Welcome {user.name}
-            </button>
-            {profileOpen && (
-              <UserProfilePopup 
-                user={user} 
-                onClose={() => setProfileOpen(false)} 
-                onLogout={handleLogout} 
-              />
-            )}
-          </div>
-        ) : (
-          <>
-            <button className="login-btn" onClick={() => navigate('/login')}>LOGIN</button>
-            <button className="signup-btn" onClick={() => navigate('/signup')}>SIGNUP</button>
-          </>
-        )}
+        <button className="login-btn">LOGIN</button>
+        <button className="signup-btn">SIGNUP</button>
       </div>
     </nav>
   );

@@ -6,9 +6,7 @@ import Footer from './components/Footer';
 import NavBar from './components/NavBar/NavBar';
 import ProductPage from './pages/productpage/ProductPage';
 import Product from './pages/productpage/Product';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import OtpVerification from './pages/OtpVerification';
+import ContentManager from './pages/ContentManager';
 
 const App = () => {
   return (
@@ -19,9 +17,7 @@ const App = () => {
         <Route path='/books' element={<Books/>}/>
         <Route path='/product' element={<ProductPage/>}/>
         <Route path='/product/view' element={<Product/>}/>
-        <Route path='/login' element={<Login/>}/>
-        <Route path='/signup' element={<Signup/>}/>
-        <Route path='/otp-verification' element={<OtpVerification/>}/>
+        <Route path='/content' element={<ContentManager/>}/>
       </Routes>
       <Footer/>
     </div>

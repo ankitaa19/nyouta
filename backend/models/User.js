@@ -19,6 +19,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "https://www.gravatar.com/avatar/"
   },
+  phone:{
+    type: Number,
+  },
   gender:{
     type: String,
     enum: ['Male', 'Female', 'Other', 'Prefer not to say'],

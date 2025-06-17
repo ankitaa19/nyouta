@@ -9,6 +9,7 @@ import weddingwebsiteRoutes from './routes/weddingwebsiteRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import addressRoutes from './routes/addressRoutes.js';
+import contentRoutes from './routes/contentRoutes.js';
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
@@ -70,6 +71,7 @@ app.use('/api/v1/weddingwebsite', weddingwebsiteRoutes);
 app.use('/api/v1/cart', cartRoutes);
 app.use('/api/v1/order', orderRoutes);
 app.use('/api/v1/address', addressRoutes);
+app.use('/api/v1/content', contentRoutes);
 // Port
 const PORT = process.env.PORT || 5000;
 

@@ -25,12 +25,17 @@ const generateOTP = () => {
 // Register user with email verification
 export const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    if (!email || !password || !name) {
-      return res.status(400).json({ message: "All fields (email, password, name) are required" });
+    const { emailorphone, password, name } = req.body;
+    if (!emailorphone || !password || !name) {
+      return res.status(400).json({ message: "All fields are required" });
     }
- 
-    let existingUser = await User.findOne({ email });
+
+    let existingUser;
+    if (emailorphone.includes("@")) {
+      existingUser = await User.findOne({ email: emailorphone });
+    } else {
+      existingUser = await User.findOne({ phone: emailorphone });
+    }
 
     if (existingUser) {
       if(existingUser.isVerified){
@@ -41,28 +46,28 @@ export const register = async (req, res) => {
         existingUser.otp = otp;
         existingUser.otpGeneratedAt = Date.now();
         await existingUser.save();
-        if(email || existingUser.email){
-          await transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: email || existingUser.email,
-            subject: 'Verify Your Email Address',
-            html: `<p>Hello ${name},</p>
-                   <p>Thank you for registering. Please verify your email address by entering the OTP below:</p>
-                   <p><strong>${otp}</strong></p>
-                   <p>This OTP is valid for 10 mins.</p>`,
-          });
-        }
+        await transporter.sendMail({
+          from: process.env.EMAIL_USER,
+          to: emailorphone,
+          subject: 'Verify Your Email Address',
+          html: `<p>Hello ${name},</p>
+                 <p>Thank you for registering. Please verify your email address by entering the OTP below:</p>
+                 <p><strong>${otp}</strong></p>
+                 <p>This OTP is valid for 10 mins.</p>`,
+        });
         return res.status(201).json({ message: 'User registered successfully. Please verify your email.' });
       }
     }
 
-    const user = new User({ email, partnerName:name, password, name, isVerified: false });
+    const email = emailorphone.includes("@") ? emailorphone : null;
+    const phone = emailorphone.includes("@") ? null : emailorphone;
+    const user = new User({ email, partnerName:name, phone, password, name, isVerified: false });
 
     const otp = generateOTP();
     user.otp = otp;
     await user.save();
-
-    if(email){
+  //  console.log(user.otp);
+    if (email) {
       await transporter.sendMail({
         from: process.env.EMAIL_USER,
         to: email,
@@ -72,43 +77,44 @@ export const register = async (req, res) => {
                <p><strong>${otp}</strong></p>
                <p>This OTP is valid for 10 mins.</p>`,
       });
+      return res.status(201).json({
+        message: 'User registered successfully. Please verify your email.',
+      });
+    } else {
+      const formatContactNumber = (contactNumber) => {
+        if (contactNumber.startsWith("+91")) {
+          return contactNumber.slice(3); // Remove +91
+        }
+        return contactNumber;
+      };
+
+      const formattedPhone = formatContactNumber(phone);
+      const fast2smsData = {
+        route: "otp",
+        variables_values: otp,
+        numbers: formattedPhone,
+      };
+
+      const fast2smsHeaders = {
+        authorization: process.env.FAST2SMS_API_KEY,
+        "Content-Type": "application/json",
+      };
+
+      const response = await fetch(
+        "https://www.fast2sms.com/dev/bulkV2",
+        {
+          method: "POST",
+          body: JSON.stringify(fast2smsData),
+          headers: fast2smsHeaders
+        }
+      );
+
+      if (response.status === 200) {
+        return res.status(201).json({
+          message: 'User registered successfully. Please verify your phone number.',
+        });
+      }
     }
-
-
-    // Removed phone related SMS OTP sending and response messages
-    // const formatContactNumber = (contactNumber) => {
-    //   if (contactNumber.startsWith("+91")) {
-    //     return contactNumber.slice(3); // Remove +91
-    //   }
-    //   return contactNumber;
-    // };
-
-    // const formattedPhone = formatContactNumber(phone);
-    // const fast2smsData = {
-    //   route: "otp",
-    //   variables_values: otp,
-    //   numbers: formattedPhone,
-    // };
-
-    // const fast2smsHeaders = {
-    //   authorization: process.env.FAST2SMS_API_KEY,
-    //   "Content-Type": "application/json",
-    // };
-
-    // const response = await fetch(
-    //   "https://www.fast2sms.com/dev/bulkV2",
-    //   {
-    //     method: "POST",
-    //     body: JSON.stringify(fast2smsData),
-    //     headers: fast2smsHeaders
-    //   }
-    // );
-
-    // if (response.status === 200) {
-    //   return res.status(201).json({
-    //     message: 'User registered successfully. Please verify your phone number.',
-    //   });
-    // }
   } catch (error) {
     console.error(error);
     res.status(400).json({ message: error.message });
@@ -118,14 +124,18 @@ export const register = async (req, res) => {
 // Login user
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { emailorphone, password } = req.body;
     
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+    if (!emailorphone || !password) {
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     let user;
-    user = await User.findOne({ email });
+    if (emailorphone.includes("@")) {
+      user = await User.findOne({ email: emailorphone });
+    } else {
+      user = await User.findOne({ phone: emailorphone });
+    }
 
   if(!user){
     return res.status(401).json({ message: 'User not found' });
@@ -136,17 +146,15 @@ export const login = async (req, res) => {
       user.otp = otp;
       user.otpGeneratedAt = Date.now();
       await user.save();
-      if(user.email){
-        await transporter.sendMail({
-          from: process.env.EMAIL_USER,
-          to: user.email,
-          subject: 'Verify Your Email Address',
-          html: `<p>Hello ${user.name},</p>
-                 <p>Thank you for registering. Please verify your email address by entering the OTP below:</p>
-                 <p><strong>${user.otp}</strong></p>
-                 <p>This OTP is valid for 10 mins.</p>`,
-        });
-      }
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: user.email,
+        subject: 'Verify Your Email Address',
+        html: `<p>Hello ${user.name},</p>
+               <p>Thank you for registering. Please verify your email address by entering the OTP below:</p>
+               <p><strong>${user.otp}</strong></p>
+               <p>This OTP is valid for 10 mins.</p>`,
+      });
       return res.status(201).json({ message: 'Please verify your email.',requiresOtp:true });
     }
   }
@@ -161,8 +169,8 @@ export const login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
-    const { _id, name, email: userEmail, role, isWebsiteCreated,websitePassword } = user;
-    res.json({ token, user: { _id, name, userEmail, email, role, isWebsiteCreated,websitePassword } });
+    const { _id, name, email: userEmail, phone, role, isWebsiteCreated,websitePassword } = user;
+    res.json({ token, user: { _id, name, userEmail, phone, role, isWebsiteCreated,websitePassword } });
   } catch (error) {
     console.error(error);
     res.status(400).json({ message: error.message });
@@ -172,10 +180,14 @@ export const login = async (req, res) => {
 // Verify OTP
 export const verifyEmail = async (req, res) => {
   try {
-    const { email, otp } = req.body;
+    const { emailorphone, otp } = req.body;
 
     let user;
-    user = await User.findOne({ email });
+    if (emailorphone.includes("@")) {
+      user = await User.findOne({ email: emailorphone });
+    } else {
+      user = await User.findOne({ phone: emailorphone });
+    }
 
     if (!user) {
       return res.status(404).json({ error: 'User not found.' });
@@ -202,6 +214,7 @@ export const verifyEmail = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         role: user.role,
         isWebsiteCreated: user.isWebsiteCreated,
         websitePassword: user.websitePassword,
@@ -309,7 +322,7 @@ export const getUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    const { _id, name, email, role, isWebsiteCreated } = user;
+    const { _id, name, email, phone, role, isWebsiteCreated } = user;
     res.status(200).json({ user });
   }
   catch (err) {
