@@ -1,23 +1,19 @@
 import React from 'react'
+// import '../style/PlanBook.scss'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedProduct } from '../../../redux/productsSlice';
 
 function GuestListBooklet() {
     const productCategories = ["Wedding", "Management", "Guest Management"]
     const navigate = useNavigate();
 
-    const ProductCard = ({ title = "Product Name Here" }) => (
-        <div className="product-card"  onClick={()=>navigate('/product')} >
-            <div className="pc_card_container">
-                <div className="product-design">
-                    Design <br /> Here
-                </div>
-            </div>
-            <div className="product-title">"{title}"</div>
-        </div>
-    )
+    const { freeGreetingsProducts } = useSelector(store => store.product)
+    const dispatch = useDispatch();
+
+    // console.log(photoBooksProducts)
 
     return (
-
         <div className="planner-book">
             <h2 className="planner-title">Guest List Book</h2>
 
@@ -28,16 +24,26 @@ function GuestListBooklet() {
                         {index < productCategories.length - 1 && <span className="divider">|</span>}
                     </span>
                 ))}
+                view all
             </div>
 
             <div className="product-grid">
-                {Array.from({ length: 5 }).map((_, index) => (
-                    <ProductCard key={index} />
+                {freeGreetingsProducts?.slice(0, 5).map((c, index) => (
+                    // <ProductCard key={index} />
+                    <div className="product-card" onClick={() => {
+                        navigate('/product/view');
+                        dispatch(setSelectedProduct(c));
+                    }} key={index} >
+                        <div className="pc_card_container">
+                            <div className="product-design">
+                                <img src={c?.image[0]} alt="" />
+                            </div>
+                        </div>
+                        <div className="product-title">"{c?.name}"</div>
+                    </div>
                 ))}
             </div>
         </div>
-
-
     )
 }
 

@@ -1,21 +1,20 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import '../style/PlanBook.scss'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedProduct } from '../../../redux/productsSlice';
 
 function PlanBook() {
     const productCategories = ["Wedding", "Management", "Guest Management"]
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const ProductCard = ({ title = "Product Name Here" }) => (
-        <div className="product-card" onClick={()=>navigate('/product')} >
-            <div className="pc_card_container">
-                <div className="product-design">
-                    Design <br /> Here
-                </div>
-            </div>
-            <div className="product-title">"{title}"</div>
-        </div>
-    )
+    const { photoBooksProducts } = useSelector(store => store.product)
+
+    // console.log(photoBooksProducts)
+      useEffect(()=>{
+        window.scrollTo(0,0)
+      },[])
 
     return (
         <div className="planner-book">
@@ -28,11 +27,23 @@ function PlanBook() {
                         {index < productCategories.length - 1 && <span className="divider">|</span>}
                     </span>
                 ))}
+                view all
             </div>
 
             <div className="product-grid">
-                {Array.from({ length: 5 }).map((_, index) => (
-                    <ProductCard key={index} />
+                {photoBooksProducts?.slice(0,5).map((c, index) => (
+                    // <ProductCard key={index} />
+                    <div className="product-card" onClick={() => {
+                        navigate('/product/view');
+                        dispatch(setSelectedProduct(c))
+                    }} key={index} >
+                        <div className="pc_card_container">
+                            <div className="product-design">
+                                <img src={c?.image[0]} alt="" />
+                            </div>
+                        </div>
+                        <div className="product-title">"{c?.name}"</div>
+                    </div>
                 ))}
             </div>
         </div>
