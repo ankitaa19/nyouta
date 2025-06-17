@@ -1,140 +1,174 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './style/Navbar.scss';
-import LOGO from '../../utils/nyotalogo';
+import { useState } from 'react';
+import LOGO from '../utils/nyotalogo';
 
-const NavBar = () => {
-  const navigate = useNavigate();
+const Navbar = () => {
+  // State to manage which dropdown is open
   const [openDropdown, setOpenDropdown] = useState(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [touchDevice, setTouchDevice] = useState(false);
 
+  // Sample dropdown items for each nav item
   const dropdownItems = {
-    invitation: [
-      { name: 'Planner Book', path: '/books' },
-      { name: 'Wedding Invites', path: '#' },
-      { name: 'Party Invites', path: '#' },
-      { name: 'Pooja Invites', path: '#' },
-      { name: 'Ceremony Invites', path: '#' },
-      { name: 'Short Invites - Free', path: '#' }
-    ],
-    books: [
-      { name: 'Soft Cover Photobook', path: '#' },
-      { name: 'Hard Cover Photobook', path: '#' },
-      { name: 'Spiral Photobook', path: '#' },
-      { name: 'Photo Folder', path: '#' },
-      { name: 'Digital Photobook', path: '#' }
-    ],
-    gifts: [
-      { name: 'Personalized Gifts', path: '#' },
-      { name: 'Gift Cards', path: '#' },
-      { name: 'Gift Sets', path: '#' }
-    ],
-    eshop: [
-      { name: 'Shagun Envelop', path: '#' },
-      { name: 'Gifts', path: '#' },
-      { name: 'Photo Magnet', path: '#' },
-      { name: 'Essentials', path: '#' }
-    ],
-    wedding: [
-      { name: 'Templates', path: '#' },
-      { name: 'RSVP Management', path: '#' },
-      { name: 'Guest List', path: '#' }
-    ]
+    invitation: ['Wedding Invites', 'Party Invites', 'Pooja Invites','Ceremony Invites','Short Invites - Free'],
+    books: ['Soft Cover Photobook ','Hard Cover Photobook', 'Spiral Photobook','Photo Folder','Digital Photobook'],
+    gifts: ['Personalized Gifts', 'Gift Cards', 'Gift Sets'],
+    eshop: ['Shagun Envelop', 'Gifts', 'Photo Magnet','Essentials'],
+    wedding: ['Templates', 'RSVP Management', 'Guest List']
   };
 
-  useEffect(() => {
-    const isTouchDevice = () => {
-      return (('ontouchstart' in window) ||
-        (navigator.maxTouchPoints > 0) ||
-        (navigator.msMaxTouchPoints > 0));
-    };
-    setTouchDevice(isTouchDevice());
-  }, []);
-
-  const handleMenuToggle = (menu) => {
-    setOpenDropdown(openDropdown === menu ? null : menu);
-  };
-
+  // Handle mouse enter to show dropdown
   const handleMouseEnter = (menu) => {
-    if (!touchDevice) {
-      setOpenDropdown(menu);
-    }
+    setOpenDropdown(menu);
   };
 
+  // Handle mouse leave to hide dropdown
   const handleMouseLeave = () => {
-    if (!touchDevice) {
-      setOpenDropdown(null);
-    }
+    setOpenDropdown(null);
   };
-
-  const renderDropdown = (menuKey) => (
-    openDropdown === menuKey && (
-      <div 
-        className={`dropdown-menu ${openDropdown === menuKey ? 'active' : ''}`}
-        onMouseEnter={() => !touchDevice && setOpenDropdown(menuKey)}
-        onMouseLeave={() => !touchDevice && setOpenDropdown(null)}
-      >
-        {dropdownItems[menuKey].map((item, index) => (
-          <a 
-            key={index} 
-            href={item.path} 
-            className="dropdown-item"
-            onClick={(e) => {
-              if (item.path !== '#') {
-                e.preventDefault();
-                navigate(item.path);
-              }
-            }}
-          >
-            {item.name}
-          </a>
-        ))}
-      </div>
-    )
-  );
 
   return (
-    <nav className="navbar">
-      <div className="navbar-logo">
-        <img src={LOGO} alt="Nyouta Logo" />
+    <nav className="bg-[#653100] text-white px-6 py-3 flex justify-between items-center">
+      {/* Logo */}
+      <div className="flex items-center space-x-2">
+        <img
+          src={LOGO} // place your logo in public folder or adjust path
+          alt="Nyouta Logo"
+          className="h-10"
+        />
       </div>
 
-      <button
-        className="navbar-toggle"
-        onClick={() => setMenuOpen(!menuOpen)}
-        aria-label="Toggle menu"
-      >
-        ☰
-      </button>
+      {/* Links */}
+      <div className="flex space-x-6 text-sm">
+        <div 
+          className="group relative"
+          onMouseEnter={() => handleMouseEnter('invitation')}
+          onMouseLeave={handleMouseLeave}
+        >
+          <button className="hover:underline flex items-center">
+            Invitation
+            <span className="ml-1 text-xs">▼</span>
+          </button>
+          {openDropdown === 'invitation' && (
+            <div className="absolute left-0 mt-2 w-48 bg-white text-[#653100] rounded-md shadow-lg z-10">
+              {dropdownItems.invitation.map((item, index) => (
+                <a
+                  key={index}
+                  href="#"
+                  className="block px-4 py-2 hover:bg-yellow-100"
+                >
+                  {item}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
 
-      <div className={`navbar-links ${menuOpen ? 'active' : ''}`}>
-        {Object.keys(dropdownItems).map((key) => (
-          <div
-            className="navbar-item"
-            onMouseEnter={() => handleMouseEnter(key)}
-            onMouseLeave={handleMouseLeave}
-            key={key}
-          >
-            <button 
-              className="navbar-button"
-              onClick={() => handleMenuToggle(key)}
-              aria-expanded={openDropdown === key}
-            >
-              {key === 'eshop' ? 'e-shop' : key.charAt(0).toUpperCase() + key.slice(1)}
-              <span className="dropdown-arrow">▼</span>
-            </button>
-            {renderDropdown(key)}
-          </div>
-        ))}
+        <div 
+          className="group relative"
+          onMouseEnter={() => handleMouseEnter('books')}
+          onMouseLeave={handleMouseLeave}
+        >
+          <button className="hover:underline flex items-center">
+            Books
+            <span className="ml-1 text-xs">▼</span>
+          </button>
+          {openDropdown === 'books' && (
+            <div className="absolute left-0 mt-2 w-48 bg-white text-[#653100] rounded-md shadow-lg z-10">
+              {dropdownItems.books.map((item, index) => (
+                <a
+                  key={index}
+                  href="#"
+                  className="block px-4 py-2 hover:bg-yellow-100"
+                >
+                  {item}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div 
+          className="group relative"
+          onMouseEnter={() => handleMouseEnter('gifts')}
+          onMouseLeave={handleMouseLeave}
+        >
+          <button className="hover:underline flex items-center">
+            Gifts
+            <span className="ml-1 text-xs">▼</span>
+          </button>
+          {openDropdown === 'gifts' && (
+            <div className="absolute left-0 mt-2 w-48 bg-white text-[#653100] rounded-md shadow-lg z-10">
+              {dropdownItems.gifts.map((item, index) => (
+                <a
+                  key={index}
+                  href="#"
+                  className="block px-4 py-2 hover:bg-yellow-100"
+                >
+                  {item}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div 
+          className="group relative"
+          onMouseEnter={() => handleMouseEnter('eshop')}
+          onMouseLeave={handleMouseLeave}
+        >
+          <button className="hover:underline flex items-center">
+            e-shop
+            <span className="ml-1 text-xs">▼</span>
+          </button>
+          {openDropdown === 'eshop' && (
+            <div className="absolute left-0 mt-2 w-48 bg-white text-[#653100] rounded-md shadow-lg z-10">
+              {dropdownItems.eshop.map((item, index) => (
+                <a
+                  key={index}
+                  href="#"
+                  className="block px-4 py-2 hover:bg-yellow-100"
+                >
+                  {item}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div 
+          className="group relative"
+          onMouseEnter={() => handleMouseEnter('wedding')}
+          onMouseLeave={handleMouseLeave}
+        >
+          <button className="hover:underline flex items-center">
+            Wedding website
+            <span className="ml-1 text-xs">▼</span>
+          </button>
+          {openDropdown === 'wedding' && (
+            <div className="absolute left-0 mt-2 w-48 bg-white text-[#653100] rounded-md shadow-lg z-10">
+              {dropdownItems.wedding.map((item, index) => (
+                <a
+                  key={index}
+                  href="#"
+                  className="block px-4 py-2 hover:bg-yellow-100"
+                >
+                  {item}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className={`navbar-auth ${menuOpen ? 'active' : ''}`}>
-        <button className="login-btn">LOGIN</button>
-        <button className="signup-btn">SIGNUP</button>
+      {/* Auth Buttons */}
+      <div className="flex space-x-3">
+        <button className="border border-white px-4 py-1 rounded-full text-white hover:bg-white hover:text-[#653100] transition">
+          LOGIN
+        </button>
+        <button className="bg-white text-[#653100] px-4 py-1 rounded-full hover:bg-yellow-100 transition">
+          SIGNUP
+        </button>
       </div>
     </nav>
   );
 };
 
-export default NavBar;
+export default Navbar;
