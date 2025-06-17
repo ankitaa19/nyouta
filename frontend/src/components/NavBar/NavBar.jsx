@@ -14,7 +14,6 @@ const NavBar = () => {
 
   const dropdownItems = {
     invitation: [
-      { name: 'Planner Book', path: '/books' },
       { name: 'Wedding Invites', path: '#' },
       { name: 'Party Invites', path: '#' },
       { name: 'Pooja Invites', path: '#' },
@@ -22,6 +21,7 @@ const NavBar = () => {
       { name: 'Short Invites - Free', path: '#' }
     ],
     books: [
+      { name: 'Planner Book', path: '/books' },
       { name: 'Soft Cover Photobook', path: '#' },
       { name: 'Hard Cover Photobook', path: '#' },
       { name: 'Spiral Photobook', path: '#' },

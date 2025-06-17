@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import './App.css';
 import main from './assets/main.svg';
 import arrow from './assets/arrow.svg';
@@ -6,15 +6,26 @@ import small from './assets/small.svg';
 import icon from './assets/icon.svg';
 import share from './assets/share.svg';
 import heart from './assets/heart.svg';
+import { useSelector } from "react-redux";
 
 
 const Product = () => {
     const [quantity, setQuantity] = useState(1);
-
+    const { selectedProduct } = useSelector(store => store.product);
     const handleQuantityChange = (change) => {
         setQuantity((prev) => Math.max(1, prev + change));
     };
+    const [selectedImage, setSelectedImage] = useState(null);
 
+    useEffect(() => {
+        window.scrollTo(0,0)
+
+        if (selectedProduct?.image?.length > 0) {
+            setSelectedImage(selectedProduct.image[0]); // default to first image
+        }
+    }, [selectedProduct]);
+
+    console.log(selectedProduct);
     return (
         <div className="p-4 max-w-7xl mx-auto">
             <div className="flex items-center gap-x-1 font-semibold Class	Description
@@ -32,12 +43,14 @@ cursor-pointer overflow-x-auto whitespace-nowrap">
                 <div className="md:w-1/2 flex gap-4">
                     {/* Small Images on the Left */}
                     <div className="flex flex-col gap-2">
-                        {[...Array(8)].map((_, idx) => (
+                        {selectedProduct?.image?.map((singleImage, idx) => (
                             <img
                                 key={idx}
-                                src={small}
+                                src={singleImage}
                                 alt={`Thumbnail ${idx + 1}`}
-                                className="w-14 h-14 rounded border"
+                                className={`w-14 h-14 rounded border cursor-pointer ${selectedImage === singleImage ? 'border-orange-700' : ''
+                                    }`}
+                                onClick={() => setSelectedImage(singleImage)}
                             />
                         ))}
                     </div>
@@ -45,7 +58,7 @@ cursor-pointer overflow-x-auto whitespace-nowrap">
                     {/* Main Image on the Right */}
                     <div className="flex-1">
                         <img
-                            src={main}
+                            src={selectedImage}
                             alt="Main Product"
                             className="w-full h-auto rounded"
                         /> <br />
@@ -66,7 +79,7 @@ cursor-pointer overflow-x-auto whitespace-nowrap">
                 {/* Right Product Info Section */}
                 <div className="md:w-1/2 space-y-4">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-2xl font-semibold mt-6">Name of product</h2>
+                        <h2 className="text-2xl font-semibold mt-6">{selectedProduct?.name}</h2>
                         <div className="flex gap-2">
                             <img src={share} alt="Share" className="w-5 h-5 cursor-pointer" />
                             <img src={heart} alt="Wishlist" className="w-5 h-5 cursor-pointer" />
@@ -74,7 +87,7 @@ cursor-pointer overflow-x-auto whitespace-nowrap">
                     </div>
                     <p className="text-gray-600">Description, size, colour, type</p>
                     <div className="text-xl font-bold">
-                        Rs. 99/- <del className="text-gray-500">198</del>{" "}
+                        Rs. {selectedProduct?.price}/- <del className="text-gray-500">198</del>{" "}
                         <span className="text-green-600">50% OFF</span>
                     </div>
                     <p className="text-sm text-gray-500">Price incl. of all taxes</p>
@@ -108,10 +121,10 @@ cursor-pointer overflow-x-auto whitespace-nowrap">
                     </div>
 
                     <div className=" gap-4">
-                        <button className="px-4 py-2 bg-button text-white rounded-lg">ADD TO CART</button>
+                        <button className="px-4 py-2 bg-orange-900 text-white rounded-lg">ADD TO CART</button>
                         <br />
                         <br />
-                        <button className="px-2 py-2 bg-button text-white w-full rounded-lg">BUY NOW</button>
+                        <button className="px-2 py-2 bg-orange-900 text-white w-full rounded-lg">BUY NOW</button>
                     </div>
 
 
