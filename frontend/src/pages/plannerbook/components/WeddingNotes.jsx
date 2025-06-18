@@ -28,12 +28,12 @@ function WeddingNotes() {
             </div>
 
             <div className="product-grid">
-                {weddingProducts?.slice(0,5).map((c, index) => (
+                {weddingProducts?.slice(0, 5).map((c, index) => (
                     // <ProductCard key={index} />
                     <div className="product-card" onClick={() => {
-                        navigate('/product/view');
-                        dispatch(setSelectedProduct(c));
-                     } } key={index} >
+                        navigate(`/product/view/${c._id}`);
+                        dispatch(setSelectedProduct(c))
+                    }} key={index} >
                         <div className="pc_card_container">
                             <div className="product-design">
                                 <img src={c?.image[0]} alt="" />

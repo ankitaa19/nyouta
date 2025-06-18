@@ -7,9 +7,16 @@ import icon from './assets/icon.svg';
 import share from './assets/share.svg';
 import heart from './assets/heart.svg';
 import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import useGetSingleProduct from "../../hooks/useGetSingleProduct";
 
 
 const Product = () => {
+
+    const { productId } = useParams();
+
+    useGetSingleProduct({ productId });
+
     const [quantity, setQuantity] = useState(1);
     const { selectedProduct } = useSelector(store => store.product);
     const handleQuantityChange = (change) => {
@@ -18,14 +25,16 @@ const Product = () => {
     const [selectedImage, setSelectedImage] = useState(null);
 
     useEffect(() => {
-        window.scrollTo(0,0)
+        window.scrollTo(0, 0)
 
         if (selectedProduct?.image?.length > 0) {
-            setSelectedImage(selectedProduct.image[0]); // default to first image
+            setSelectedImage(selectedProduct.image[0]);
         }
     }, [selectedProduct]);
 
     console.log(selectedProduct);
+
+
     return (
         <div className="p-4 max-w-7xl mx-auto">
             <div className="flex items-center gap-x-1 font-semibold Class	Description

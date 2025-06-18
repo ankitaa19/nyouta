@@ -100,7 +100,7 @@ function ProductPage() {
                     {/* Product Card */}
                     {allProducts?.map((singleProduct, index) => (
                         <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden transform transition-all duration-300 hover:shadow-lg hover:scale-105" onClick={() => {
-                            navigate('/product/view')
+                            navigate(`/product/view/${singleProduct._id}`)
                             dispatch(setSelectedProduct(singleProduct))
                         } } >
                             <img src={singleProduct?.image[0]} alt="Photo frame" className="w-full h-64 object-contain" />

@@ -31,7 +31,7 @@ function GuestListBooklet() {
                 {freeGreetingsProducts?.slice(0, 5).map((c, index) => (
                     // <ProductCard key={index} />
                     <div className="product-card" onClick={() => {
-                        navigate('/product/view');
+                        navigate(`/product/view/${c._id}`);
                         dispatch(setSelectedProduct(c));
                     }} key={index} >
                         <div className="pc_card_container">

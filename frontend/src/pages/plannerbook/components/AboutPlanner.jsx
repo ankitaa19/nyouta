@@ -27,7 +27,7 @@ function AboutPlanner() {
             <div className="about_nav">
                 <ul>
                     {aboutNav.map((n,i)=>(
-                        <li>{n.text}</li>
+                        <li key={i}>{n.text}</li>
                     ))}
                 </ul>
             </div>

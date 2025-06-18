@@ -12,9 +12,9 @@ function PlanBook() {
     const { photoBooksProducts } = useSelector(store => store.product)
 
     // console.log(photoBooksProducts)
-      useEffect(()=>{
-        window.scrollTo(0,0)
-      },[])
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [])
 
     return (
         <div className="planner-book">
@@ -31,11 +31,11 @@ function PlanBook() {
             </div>
 
             <div className="product-grid">
-                {photoBooksProducts?.slice(0,5).map((c, index) => (
+                {photoBooksProducts?.slice(0, 5).map((c, index) => (
                     // <ProductCard key={index} />
                     <div className="product-card" onClick={() => {
-                        navigate('/product/view');
-                        dispatch(setSelectedProduct(c))
+                        navigate(`/product/view/${c._id}`);
+                        dispatch(setSelectedProduct(c));
                     }} key={index} >
                         <div className="pc_card_container">
                             <div className="product-design">
