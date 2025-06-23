@@ -9,12 +9,13 @@ import heart from './assets/heart.svg';
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import useGetSingleProduct from "../../hooks/useGetSingleProduct";
+import {useNavigate} from 'react-router-dom';
 
 
 const Product = () => {
 
     const { productId } = useParams();
-
+    const navigate = useNavigate();
     useGetSingleProduct({ productId });
 
     const [quantity, setQuantity] = useState(1);
@@ -112,6 +113,7 @@ cursor-pointer overflow-x-auto whitespace-nowrap">
                         <button
                             className="px-3 py-1 bg-gray-200 rounded"
                             onClick={() => handleQuantityChange(-1)}
+                            style={{ cursor: 'pointer' }}
                         >
                             -
                         </button>
@@ -124,16 +126,23 @@ cursor-pointer overflow-x-auto whitespace-nowrap">
                         <button
                             className="px-3 py-1 bg-gray-200 rounded"
                             onClick={() => handleQuantityChange(1)}
+                            style={{ cursor: 'pointer' }}
                         >
                             +
                         </button>
                     </div>
 
                     <div className=" gap-4">
-                        <button className="px-4 py-2 bg-orange-900 text-white rounded-lg">ADD TO CART</button>
+                        <button style={{ cursor: 'pointer' }} className="px-4 py-2 bg-orange-900 text-white rounded-lg">ADD TO CART</button>
                         <br />
                         <br />
-                        <button className="px-2 py-2 bg-orange-900 text-white w-full rounded-lg">BUY NOW</button>
+                        <button style={{ cursor: 'pointer' }} className="px-2 py-2 bg-orange-900 text-white w-full rounded-lg">BUY NOW</button>
+                    </div>
+                    <div style={{ display: 'flex', gap: '2rem' }}>
+                        <button style={{ cursor: 'pointer' }} className="px-2 py-2 bg-red-600 text-white w-full rounded-lg">DELETE</button>
+                        <button style={{ cursor: 'pointer' }} className="px-2 py-2 bg-gray-900 text-white w-full rounded-lg"
+                            onClick={()=>navigate('/product/create')}
+                        >UPDATE</button>
                     </div>
 
 

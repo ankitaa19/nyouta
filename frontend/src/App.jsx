@@ -9,6 +9,7 @@ import Product from './pages/productpage/Product';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import OtpVerification from './pages/OtpVerification';
+import AddProduct from './pages/productpage/AddProduct';
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Route path='/' element={<Home/>}/>
         <Route path='/books' element={<Books/>}/>
         <Route path='/product' element={<ProductPage/>}/>
+        <Route path='/product/create' element={<AddProduct/>}/>
         <Route path='/product/view/:productId' element={<Product/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/signup' element={<Signup/>}/>
